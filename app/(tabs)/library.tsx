@@ -45,7 +45,7 @@ export default function LibraryScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 20, gap: 6, paddingVertical: 12 }}
+        contentContainerStyle={{ paddingHorizontal: 20, gap: 6, paddingVertical: 12, alignItems: 'center' }}
       >
         {TABS.map((t) => (
           <TouchableOpacity

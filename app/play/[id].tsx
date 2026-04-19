@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, SafeAreaView,
 } from 'react-native';
@@ -7,6 +7,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { SONGS } from '../../constants/songs';
 import { CHORD_COLORS } from '../../constants/theme';
 import { Icon } from '../../components/Icon';
+import { useMetronome } from '../../hooks/useMetronome';
 
 export default function PlayAlongScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -15,27 +16,12 @@ export default function PlayAlongScreen() {
   const [playing, setPlaying] = useState(false);
   const [currentLine, setCurrentLine] = useState(0);
   const [currentBeat, setCurrentBeat] = useState(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lines = song.lines || [];
 
-  useEffect(() => {
-    if (playing) {
-      const beatMs = (60 / song.bpm) * 1000;
-      intervalRef.current = setInterval(() => {
-        setCurrentBeat((b) => {
-          const next = b + 1;
-          if (next >= 4) {
-            setCurrentLine((l) => (l + 1) % (lines.length || 1));
-            return 0;
-          }
-          return next;
-        });
-      }, beatMs);
-    } else {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    }
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [playing, song.bpm, lines.length]);
+  useMetronome(song.bpm, playing, (beat) => {
+    setCurrentBeat(beat);
+    if (beat === 0) setCurrentLine((l) => (l + 1) % (lines.length || 1));
+  });
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
