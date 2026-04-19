@@ -109,14 +109,8 @@ export default function SongDetailScreen() {
       {/* Hero */}
       <View style={{ height: 240, overflow: 'hidden', position: 'relative' }}>
         <CoverArt song={song} size={Dimensions.get('window').width} rounded={0} />
-        <View style={{
-          position: 'absolute', inset: 0,
-          backgroundColor: 'transparent',
-          // Gradient overlay via layered views
-        }}>
-          <View style={{ flex: 1 }} />
-          <View style={{ height: 80, backgroundColor: theme.bg, opacity: 0.0 }} />
-        </View>
+        {/* Bottom fade so hero blends into content */}
+        <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, backgroundColor: theme.bg, opacity: 0.55 }} />
         {/* Back & actions */}
         <View style={{ position: 'absolute', top: 16, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between' }}>
           <TouchableOpacity

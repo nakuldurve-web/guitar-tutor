@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, SafeAreaView,
 } from 'react-native';
@@ -102,6 +102,11 @@ export default function ListenScreen() {
   const [listening, setListening] = useState(false);
   const [score, setScore] = useState<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clean up timer if the user navigates away mid-recording
+  useEffect(() => {
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, []);
 
   const handleMicToggle = () => {
     if (listening) {
