@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
 import { useTheme } from '../../hooks/useTheme';
 import { SONGS } from '../../constants/songs';
@@ -28,7 +28,7 @@ export default function LibraryScreen() {
       <View style={{ padding: 20, paddingBottom: 4 }}>
         <Text style={{ fontSize: 28, fontWeight: '500', color: theme.ink, letterSpacing: -0.5 }}>Library</Text>
         <TouchableOpacity
-          onPress={() => router.push('/(tabs)/search' as any)}
+          onPress={() => router.push('/search')}
           activeOpacity={0.7}
           style={{
             marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 10,
