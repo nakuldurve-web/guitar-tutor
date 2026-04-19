@@ -6,7 +6,7 @@ import { SONGS } from '../../constants/songs';
 import { SongRow } from '../../components/SongRow';
 import { Icon } from '../../components/Icon';
 
-const GENRES = ['All', 'Acoustic', 'Folk', 'Indie folk', 'Pop rock', 'Indie pop', 'Rock'];
+const GENRES = ['All', 'Bollywood', 'Classic Rock', 'Folk Rock', 'Rock', 'Pop', 'Country / Folk', 'Alternative Rock', 'Indie Folk', 'Southern Rock'];
 
 export default function SearchScreen() {
   const theme = useTheme();

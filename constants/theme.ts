@@ -46,6 +46,7 @@ export const CHORD_COLORS: Record<string, string> = {
   Em: '#6b9e7f',
   Am: '#b26bc9',
   A: '#e89547',
+  A7: '#d4854a',
   E: '#4ac9b0',
   F: '#c94a6b',
   Dm: '#c97a4a',
