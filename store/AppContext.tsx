@@ -5,6 +5,7 @@ const STORAGE_KEY = '@guitartutor/state/v1';
 const TODAY = () => new Date().toISOString().slice(0, 10);
 
 export interface AppState {
+  hydrated: boolean;                       // true once AsyncStorage has been read
   userName: string;
   skillLevel: string;
   onboardingComplete: boolean;
@@ -17,6 +18,7 @@ export interface AppState {
 }
 
 const INITIAL_STATE: AppState = {
+  hydrated: false,
   userName: '',
   skillLevel: '',
   onboardingComplete: false,
@@ -29,7 +31,8 @@ const INITIAL_STATE: AppState = {
 };
 
 type Action =
-  | { type: 'HYDRATE'; payload: AppState }
+  | { type: 'HYDRATE'; payload: Omit<AppState, 'hydrated'> }
+  | { type: 'SET_HYDRATED' }
   | { type: 'COMPLETE_ONBOARDING'; name: string; skillLevel: string }
   | { type: 'PRACTICE_SONG'; songId: string }
   | { type: 'SET_SONG_SCORE'; songId: string; score: number }
@@ -39,7 +42,10 @@ type Action =
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
     case 'HYDRATE':
-      return action.payload;
+      return { ...action.payload, hydrated: true };
+
+    case 'SET_HYDRATED':
+      return { ...state, hydrated: true };
 
     case 'COMPLETE_ONBOARDING':
       return { ...state, userName: action.name, skillLevel: action.skillLevel, onboardingComplete: true };
@@ -49,15 +55,12 @@ function reducer(state: AppState, action: Action): AppState {
       const today = TODAY();
       const prevProgress = state.songProgress[songId] ?? 0;
       const prevSessions = state.songSessions[songId] ?? 0;
-      // Progress: 10% on first open, +15% per session up to 90%, then grade pushes to 100%
       const newProgress = Math.min(0.9, prevProgress + (prevProgress === 0 ? 0.1 : 0.15));
       const newSessions = prevSessions + 1;
-
       const recentSongIds = [songId, ...state.recentSongIds.filter((id) => id !== songId)].slice(0, 10);
       const practiceHistory = state.practiceHistory.includes(today)
         ? state.practiceHistory
         : [...state.practiceHistory, today];
-
       return {
         ...state,
         songProgress: { ...state.songProgress, [songId]: newProgress },
@@ -85,14 +88,13 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, pathProgress: [...state.pathProgress, action.stepId] };
 
     case 'RESET':
-      return INITIAL_STATE;
+      return { ...INITIAL_STATE, hydrated: true };
 
     default:
       return state;
   }
 }
 
-// Derived helpers
 export function calcStreak(history: string[]): number {
   if (history.length === 0) return 0;
   const sorted = [...history].sort().reverse();
@@ -130,18 +132,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Hydrate from storage on mount
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY).then((raw) => {
-      if (raw) {
-        try {
-          dispatch({ type: 'HYDRATE', payload: JSON.parse(raw) });
-        } catch {}
-      }
-    });
+    AsyncStorage.getItem(STORAGE_KEY)
+      .then((raw) => {
+        if (raw) {
+          try {
+            const parsed = JSON.parse(raw);
+            dispatch({ type: 'HYDRATE', payload: parsed });
+          } catch {
+            dispatch({ type: 'SET_HYDRATED' });
+          }
+        } else {
+          dispatch({ type: 'SET_HYDRATED' });
+        }
+      })
+      .catch(() => {
+        // AsyncStorage unavailable — run without persistence
+        dispatch({ type: 'SET_HYDRATED' });
+      });
   }, []);
 
-  // Persist on every change
+  // Persist on every change, but only after hydration
   useEffect(() => {
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if (!state.hydrated) return;
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state)).catch(() => {});
   }, [state]);
 
   return <AppContext.Provider value={{ state, dispatch }}>{children}</AppContext.Provider>;

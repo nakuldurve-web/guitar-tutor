@@ -1,4 +1,4 @@
-import { Stack, router } from 'expo-router';
+import { Stack, router, useRootNavigationState } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'react-native';
 import { useEffect } from 'react';
@@ -7,12 +7,19 @@ import { AppProvider, useApp } from '../store/AppContext';
 function RootNavigator() {
   const scheme = useColorScheme();
   const { state } = useApp();
+  const navState = useRootNavigationState();
 
   useEffect(() => {
+    // Wait until the navigator is mounted AND AsyncStorage has been read.
+    // Without both guards: we either crash (navigator not ready) or always
+    // redirect to onboarding (state not yet hydrated from storage).
+    if (!navState?.key) return;
+    if (!state.hydrated) return;
+
     if (!state.onboardingComplete) {
       router.replace('/onboarding');
     }
-  }, [state.onboardingComplete]);
+  }, [navState?.key, state.hydrated, state.onboardingComplete]);
 
   return (
     <>
