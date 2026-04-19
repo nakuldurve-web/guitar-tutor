@@ -42,11 +42,7 @@ export default function LibraryScreen() {
       </View>
 
       {/* Filter tabs */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 20, gap: 6, paddingVertical: 12, alignItems: 'center' }}
-      >
+      <View style={{ flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 10, gap: 8 }}>
         {TABS.map((t) => (
           <TouchableOpacity
             key={t.id}
@@ -60,15 +56,12 @@ export default function LibraryScreen() {
               backgroundColor: activeTab === t.id ? theme.ink : 'transparent',
             }}
           >
-            <Text style={{
-              fontSize: 12, fontWeight: '500',
-              color: activeTab === t.id ? theme.bg : theme.ink,
-            }}>
+            <Text style={{ fontSize: 12, fontWeight: '500', color: activeTab === t.id ? theme.bg : theme.ink }}>
               {t.label}
             </Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+      </View>
 
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         {songs.map((s) => (

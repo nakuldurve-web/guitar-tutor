@@ -10,6 +10,7 @@ import { CoverArt } from '../../components/CoverArt';
 import { ChordDiagram } from '../../components/ChordDiagram';
 import { Icon } from '../../components/Icon';
 import { DifficultyDots } from '../../components/DifficultyDots';
+import { playChord } from '../../utils/audioEngine';
 import Svg, { Line, Text as SvgText, Rect } from 'react-native-svg';
 
 type TabStyle = 'diagram' | 'tab' | 'card' | 'hand';
@@ -174,9 +175,10 @@ export default function SongDetailScreen() {
         {tabStyle === 'diagram' && (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 20, paddingHorizontal: 20, paddingVertical: 12 }}>
             {song.chords.map((c) => (
-              <View key={c} style={{ alignItems: 'center' }}>
+              <TouchableOpacity key={c} onPress={() => { const s = CHORD_SHAPES[c]; if (s) playChord(s.frets); }} activeOpacity={0.7} style={{ alignItems: 'center' }}>
                 <ChordDiagram name={c} size={1.2} theme={theme} showName />
-              </View>
+                <Text style={{ fontSize: 9, color: theme.inkMute, fontFamily: 'monospace', marginTop: 2 }}>TAP TO HEAR</Text>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         )}
