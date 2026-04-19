@@ -18,8 +18,6 @@ export interface Song {
   genre: string;
   color: string;
   gradient: string[];
-  plays: string;
-  progress: number;
   lines?: SongLine[];
 }
 
@@ -39,8 +37,6 @@ export const SONGS: Song[] = [
     genre: 'Acoustic',
     color: '#d94f3a',
     gradient: ['#d94f3a', '#7a2416'],
-    plays: '2.4M',
-    progress: 0.35,
     lines: [
       { chords: ['G', '', 'Em', ''], syllables: ['la', 'la', 'la', 'la'] },
       { chords: ['C', '', 'D', ''], syllables: ['la', 'la', 'la', 'la'] },
@@ -63,8 +59,6 @@ export const SONGS: Song[] = [
     genre: 'Indie folk',
     color: '#e8a547',
     gradient: ['#e8a547', '#7a4b10'],
-    plays: '812K',
-    progress: 0.6,
     lines: [
       { chords: ['C', '', 'G', ''], syllables: ['la', 'la', 'la', 'la'] },
       { chords: ['Am', '', 'F', ''], syllables: ['la', 'la', 'la', 'la'] },
@@ -85,8 +79,6 @@ export const SONGS: Song[] = [
     genre: 'Pop rock',
     color: '#4a90e2',
     gradient: ['#4a90e2', '#1a4480'],
-    plays: '5.1M',
-    progress: 0.1,
     lines: [
       { chords: ['D', '', 'A', ''], syllables: ['la', 'la', 'la', 'la'] },
       { chords: ['Bm', '', 'G', ''], syllables: ['la', 'la', 'la', 'la'] },
@@ -107,8 +99,6 @@ export const SONGS: Song[] = [
     genre: 'Acoustic',
     color: '#6b9e7f',
     gradient: ['#6b9e7f', '#2a4a3a'],
-    plays: '428K',
-    progress: 0,
   },
   {
     id: 'saffron-morning',
@@ -125,8 +115,6 @@ export const SONGS: Song[] = [
     genre: 'Folk',
     color: '#c9783a',
     gradient: ['#c9783a', '#5a2e10'],
-    plays: '1.1M',
-    progress: 0.78,
   },
   {
     id: 'postcard-weather',
@@ -143,8 +131,6 @@ export const SONGS: Song[] = [
     genre: 'Indie pop',
     color: '#b26bc9',
     gradient: ['#b26bc9', '#4a1f5a'],
-    plays: '302K',
-    progress: 0,
   },
   {
     id: 'khadi-and-kerosene',
@@ -161,8 +147,6 @@ export const SONGS: Song[] = [
     genre: 'Rock',
     color: '#3a5a8a',
     gradient: ['#3a5a8a', '#1a2a4a'],
-    plays: '1.8M',
-    progress: 0,
   },
   {
     id: 'paper-lanterns',
@@ -179,8 +163,6 @@ export const SONGS: Song[] = [
     genre: 'Acoustic',
     color: '#d9a23a',
     gradient: ['#d9a23a', '#6a4a10'],
-    plays: '956K',
-    progress: 0.2,
   },
 ];
 
@@ -191,14 +173,14 @@ export interface ChordShape {
 }
 
 export const CHORD_SHAPES: Record<string, ChordShape> = {
-  G:   { frets: [3, 2, 0, 0, 0, 3], fingers: [2, 1, 0, 0, 0, 3] },
-  C:   { frets: [-1, 3, 2, 0, 1, 0], fingers: [0, 3, 2, 0, 1, 0] },
-  D:   { frets: [-1, -1, 0, 2, 3, 2], fingers: [0, 0, 0, 1, 3, 2] },
-  Em:  { frets: [0, 2, 2, 0, 0, 0], fingers: [0, 2, 3, 0, 0, 0] },
-  Am:  { frets: [-1, 0, 2, 2, 1, 0], fingers: [0, 0, 2, 3, 1, 0] },
-  A:   { frets: [-1, 0, 2, 2, 2, 0], fingers: [0, 0, 1, 2, 3, 0] },
-  E:   { frets: [0, 2, 2, 1, 0, 0], fingers: [0, 2, 3, 1, 0, 0] },
-  F:   { frets: [1, 3, 3, 2, 1, 1], fingers: [1, 3, 4, 2, 1, 1], barre: 1 },
+  G:     { frets: [3, 2, 0, 0, 0, 3], fingers: [2, 1, 0, 0, 0, 3] },
+  C:     { frets: [-1, 3, 2, 0, 1, 0], fingers: [0, 3, 2, 0, 1, 0] },
+  D:     { frets: [-1, -1, 0, 2, 3, 2], fingers: [0, 0, 0, 1, 3, 2] },
+  Em:    { frets: [0, 2, 2, 0, 0, 0], fingers: [0, 2, 3, 0, 0, 0] },
+  Am:    { frets: [-1, 0, 2, 2, 1, 0], fingers: [0, 0, 2, 3, 1, 0] },
+  A:     { frets: [-1, 0, 2, 2, 2, 0], fingers: [0, 0, 1, 2, 3, 0] },
+  E:     { frets: [0, 2, 2, 1, 0, 0], fingers: [0, 2, 3, 1, 0, 0] },
+  F:     { frets: [1, 3, 3, 2, 1, 1], fingers: [1, 3, 4, 2, 1, 1], barre: 1 },
   'F#m': { frets: [2, 4, 4, 2, 2, 2], fingers: [1, 3, 4, 1, 1, 1], barre: 2 },
-  Bm:  { frets: [-1, 2, 4, 4, 3, 2], fingers: [0, 1, 3, 4, 2, 1], barre: 2 },
+  Bm:    { frets: [-1, 2, 4, 4, 3, 2], fingers: [0, 1, 3, 4, 2, 1], barre: 2 },
 };

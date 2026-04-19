@@ -6,20 +6,16 @@ import { SONGS, CHORD_SHAPES } from '../../constants/songs';
 import { CHORD_COLORS } from '../../constants/theme';
 import { Icon } from '../../components/Icon';
 import { playChord, playTabSequence } from '../../utils/audioEngine';
+import { useApp } from '../../store/AppContext';
 
-// Build a flat note sequence from a song's chord progression
 function buildNoteSequence(chords: string[]): { stringIndex: number; fret: number }[] {
   const notes: { stringIndex: number; fret: number }[] = [];
   for (const chord of chords) {
     const shape = CHORD_SHAPES[chord];
     if (!shape) continue;
-    // Strum all non-muted strings from low to high
     for (let si = 0; si < shape.frets.length; si++) {
-      if (shape.frets[si] >= 0) {
-        notes.push({ stringIndex: si, fret: shape.frets[si] });
-      }
+      if (shape.frets[si] >= 0) notes.push({ stringIndex: si, fret: shape.frets[si] });
     }
-    // Add a rest between chords
     notes.push({ stringIndex: 0, fret: -1 });
   }
   return notes;
@@ -28,14 +24,15 @@ function buildNoteSequence(chords: string[]): { stringIndex: number; fret: numbe
 export default function PlayAlongScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
+  const { dispatch } = useApp();
   const song = SONGS.find((s) => s.id === id) || SONGS[0];
   const [playing, setPlaying] = useState(false);
   const [currentLine, setCurrentLine] = useState(0);
   const [currentBeat, setCurrentBeat] = useState(0);
+  const [sessionStarted, setSessionStarted] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lines = song.lines || [];
 
-  // Beat counter for visual sync
   useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (!playing) return;
@@ -54,8 +51,11 @@ export default function PlayAlongScreen() {
     const next = !playing;
     setPlaying(next);
     if (next) {
+      if (!sessionStarted) {
+        dispatch({ type: 'PRACTICE_SONG', songId: song.id });
+        setSessionStarted(true);
+      }
       const notes = buildNoteSequence(song.chords);
-      // Play 2 full chord cycles
       await playTabSequence([...notes, ...notes], song.bpm * 2);
     }
   };
@@ -67,7 +67,6 @@ export default function PlayAlongScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
-      {/* Header */}
       <View style={{
         flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12,
         borderBottomWidth: 1, borderBottomColor: theme.rule,
@@ -82,7 +81,7 @@ export default function PlayAlongScreen() {
         <View style={{ width: 30 }} />
       </View>
 
-      {/* Tappable chord ribbon — tap any chord to hear it */}
+      {/* Tappable chord ribbon */}
       <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 4 }}>
         <Text style={{ fontSize: 10, fontFamily: 'monospace', color: theme.inkDim, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 8 }}>
           Tap a chord to hear it
@@ -135,10 +134,7 @@ export default function PlayAlongScreen() {
             </View>
             <View style={{ flexDirection: 'row' }}>
               {line.syllables.map((s: string, si: number) => (
-                <Text key={si} style={{
-                  flex: 1, fontSize: 18, color: theme.ink,
-                  opacity: li === currentLine && playing ? 1 : 0.4,
-                }}>
+                <Text key={si} style={{ flex: 1, fontSize: 18, color: theme.ink, opacity: li === currentLine && playing ? 1 : 0.4 }}>
                   {s}
                 </Text>
               ))}

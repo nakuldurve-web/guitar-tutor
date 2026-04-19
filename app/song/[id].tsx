@@ -11,6 +11,7 @@ import { ChordDiagram } from '../../components/ChordDiagram';
 import { Icon } from '../../components/Icon';
 import { DifficultyDots } from '../../components/DifficultyDots';
 import { playChord } from '../../utils/audioEngine';
+import { useApp } from '../../store/AppContext';
 import Svg, { Line, Text as SvgText, Rect } from 'react-native-svg';
 
 type TabStyle = 'diagram' | 'tab' | 'card' | 'hand';
@@ -96,10 +97,12 @@ function TabStaff({ theme }: { theme: any }) {
 export default function SongDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
+  const { state } = useApp();
   const [tabStyle, setTabStyle] = useState<TabStyle>('diagram');
   const [liked, setLiked] = useState(false);
 
   const song = SONGS.find((s) => s.id === id) || SONGS[0];
+  const songProgress = state.songProgress[song.id] ?? 0;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.bg }}>
@@ -212,14 +215,14 @@ export default function SongDetailScreen() {
         )}
 
         {/* Progress */}
-        {song.progress > 0 && (
+        {songProgress > 0 && (
           <View style={{ paddingHorizontal: 20, paddingBottom: 8 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
               <Text style={{ fontSize: 12, color: theme.inkDim }}>Your progress</Text>
-              <Text style={{ fontSize: 12, fontFamily: 'monospace', color: theme.inkDim }}>{Math.round(song.progress * 100)}%</Text>
+              <Text style={{ fontSize: 12, fontFamily: 'monospace', color: theme.inkDim }}>{Math.round(songProgress * 100)}%</Text>
             </View>
             <View style={{ height: 4, backgroundColor: theme.rule, borderRadius: 2, overflow: 'hidden' }}>
-              <View style={{ height: '100%', width: `${song.progress * 100}%`, backgroundColor: theme.accent }} />
+              <View style={{ height: '100%', width: `${songProgress * 100}%`, backgroundColor: theme.accent }} />
             </View>
           </View>
         )}

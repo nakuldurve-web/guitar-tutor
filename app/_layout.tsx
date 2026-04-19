@@ -1,9 +1,19 @@
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'react-native';
+import { useEffect } from 'react';
+import { AppProvider, useApp } from '../store/AppContext';
 
-export default function RootLayout() {
+function RootNavigator() {
   const scheme = useColorScheme();
+  const { state } = useApp();
+
+  useEffect(() => {
+    if (!state.onboardingComplete) {
+      router.replace('/onboarding');
+    }
+  }, [state.onboardingComplete]);
+
   return (
     <>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
@@ -21,5 +31,13 @@ export default function RootLayout() {
         <Stack.Screen name="onboarding" options={{ animation: 'fade' }} />
       </Stack>
     </>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AppProvider>
+      <RootNavigator />
+    </AppProvider>
   );
 }

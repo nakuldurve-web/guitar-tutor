@@ -10,9 +10,10 @@ interface Props {
   theme: Theme;
   onPress?: () => void;
   showProgress?: boolean;
+  progress?: number;
 }
 
-export function SongRow({ song, theme, onPress, showProgress }: Props) {
+export function SongRow({ song, theme, onPress, showProgress, progress = 0 }: Props) {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -21,10 +22,7 @@ export function SongRow({ song, theme, onPress, showProgress }: Props) {
     >
       <CoverArt song={song} size={52} rounded={6} />
       <View style={{ flex: 1, minWidth: 0 }}>
-        <Text
-          numberOfLines={1}
-          style={{ fontSize: 15, fontWeight: '500', color: theme.ink }}
-        >
+        <Text numberOfLines={1} style={{ fontSize: 15, fontWeight: '500', color: theme.ink }}>
           {song.title}
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 }}>
@@ -34,9 +32,9 @@ export function SongRow({ song, theme, onPress, showProgress }: Props) {
           <View style={{ width: 2, height: 2, borderRadius: 1, backgroundColor: theme.inkMute }} />
           <DifficultyDots n={song.difficultyDots} theme={theme} />
         </View>
-        {showProgress && song.progress > 0 && (
+        {showProgress && progress > 0 && (
           <View style={{ marginTop: 6, height: 2, backgroundColor: theme.rule, borderRadius: 1, overflow: 'hidden' }}>
-            <View style={{ height: '100%', width: `${song.progress * 100}%`, backgroundColor: theme.accent }} />
+            <View style={{ height: '100%', width: `${progress * 100}%`, backgroundColor: theme.accent }} />
           </View>
         )}
       </View>

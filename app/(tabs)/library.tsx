@@ -5,22 +5,26 @@ import { useTheme } from '../../hooks/useTheme';
 import { SONGS } from '../../constants/songs';
 import { SongRow } from '../../components/SongRow';
 import { Icon } from '../../components/Icon';
+import { useApp } from '../../store/AppContext';
 
 const TABS = [
   { id: 'all', label: 'All' },
   { id: 'learning', label: 'Learning' },
-  { id: 'saved', label: 'Saved' },
   { id: 'mastered', label: 'Mastered' },
 ];
 
 export default function LibraryScreen() {
   const theme = useTheme();
+  const { state } = useApp();
   const [activeTab, setActiveTab] = useState('all');
 
   const songs = activeTab === 'learning'
-    ? SONGS.filter((s) => s.progress > 0 && s.progress < 1)
+    ? SONGS.filter((s) => {
+        const p = state.songProgress[s.id] ?? 0;
+        return p > 0 && p < 1;
+      })
     : activeTab === 'mastered'
-    ? SONGS.filter((s) => s.progress >= 1)
+    ? SONGS.filter((s) => (state.songProgress[s.id] ?? 0) >= 1)
     : SONGS;
 
   return (
@@ -64,15 +68,26 @@ export default function LibraryScreen() {
       </View>
 
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        {songs.map((s) => (
-          <SongRow
-            key={s.id}
-            song={s}
-            theme={theme}
-            onPress={() => router.push(`/song/${s.id}`)}
-            showProgress
-          />
-        ))}
+        {songs.length === 0 ? (
+          <View style={{ padding: 40, alignItems: 'center' }}>
+            <Text style={{ fontSize: 14, color: theme.inkDim, textAlign: 'center' }}>
+              {activeTab === 'learning'
+                ? 'No songs in progress yet.\nTap any song to start learning.'
+                : 'No songs mastered yet.\nKeep practising!'}
+            </Text>
+          </View>
+        ) : (
+          songs.map((s) => (
+            <SongRow
+              key={s.id}
+              song={s}
+              progress={state.songProgress[s.id] ?? 0}
+              theme={theme}
+              onPress={() => router.push(`/song/${s.id}`)}
+              showProgress
+            />
+          ))
+        )}
         <View style={{ height: 80 }} />
       </ScrollView>
 
